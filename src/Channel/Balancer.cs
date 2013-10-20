@@ -43,7 +43,7 @@ namespace Channel
             this.workersQueue = new Subject<Worker<T>>();
             this.workerContracts = workersQueue.Zip(requester, (worker, request) =>
                 {
-                    var interceptor = request.InterceptOnCompletedWith(() => workersQueue.OnNext(worker));
+                    var interceptor = request.InterceptOnCompletedWith(() => workersQueue.OnNext(worker), balancerScheduler);
                     var contractPolicy = worker.Subscribe(interceptor);
                     return new WorkerContract<T>(worker, contractPolicy);
                 }).Timestamp();
@@ -54,14 +54,14 @@ namespace Channel
         {
             var disposables = new CompositeDisposable();
 
-            var workersDisposable = this.workerContracts.ObserveOn(balancerScheduler).Subscribe(workerContract =>
+            var workersDisposable = this.workerContracts.SubscribeOn(balancerScheduler).Subscribe(workerContract =>
             {
                 var scheduledDisposable = balancerScheduler.Schedule(policy, () => { workerContract.Value.Policy.Dispose(); workersQueue.OnNext(workerContract.Value.Worker); });
                 disposables.Add(scheduledDisposable);
             });
             disposables.Add(workersDisposable);
 
-            var startDisposable = availableWorkers.ObserveOn(balancerScheduler).Subscribe(workersQueue);
+            var startDisposable = availableWorkers.Concat(Observable.Never<Worker<T>>()).SubscribeOn(balancerScheduler).Subscribe(workersQueue);
             disposables.Add(startDisposable);
 
             return disposables;

@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BalancerTests.cs" />
-    <Compile Include="LearnEventLoopScheduler.cs" />
+    <Compile Include="LearnEventLoopSchedulerTests.cs" />
     <Compile Include="LearnSubjectTests.cs" />
     <Compile Include="LearnTestSchedulerTests.cs" />
     <Compile Include="TestHelpers\IResponse.cs" />

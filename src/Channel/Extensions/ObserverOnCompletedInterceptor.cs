@@ -35,8 +35,8 @@ namespace Channel.Extensions
 
         public void OnCompleted()
         {
-            scheduler.Schedule(onCompleted);
             observer.OnCompleted();
+            scheduler.Schedule(onCompleted);
         }
 
         public void OnError(Exception error)
