@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
 
-namespace Channel.Tests
+namespace Channel
 {
-    public class LearnIObservableTests
+    public interface Request<in T> : IObserver<T>
     {
-        
     }
 }
